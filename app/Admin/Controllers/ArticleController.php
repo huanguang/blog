@@ -10,6 +10,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use App\Admin\Extensions\Tools\MyButton;
 
 class ArticleController extends Controller
 {
@@ -24,8 +25,8 @@ class ArticleController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('Index');
-            $content->description('description');
+            $content->header('文章管理');
+            $content->description('文章列表');
 
             $content->body($this->grid());
         });
@@ -102,13 +103,29 @@ class ArticleController extends Controller
             // 第二列显示title字段，由于title字段名和Grid对象的title方法冲突，所以用Grid的column()方法代替
             $grid->column('title','标题');
             //是否显示
-            $grid->sort('排序');
+            $grid->sort('排序')->sortable();
             $grid->is_del('是否启用')->display(function ($released) {
                 return $released ? '启用' : '禁止';
             });
+//            $grid->tools(function($tools){
+//                $url = "/admin/artimage";
+//                $icon = "fa-backward";
+//                $text = "返回";
+//                $tools->append(new MyButton($url,$icon,$text));
+//            });
+            /**
+             * 筛选
+             */
+            $grid->filter(function($filter){
 
-            $grid->created_at('创建时间');
-            $grid->updated_at('更新时间');
+                // 去掉默认的id过滤器
+                $filter->disableIdFilter();
+                // 在这里添加字段过滤器
+                $filter->like('title', '标题');
+
+            });
+            $grid->created_at('创建时间')->sortable();
+            $grid->updated_at('更新时间')->sortable();
         });
     }
 
@@ -125,7 +142,7 @@ class ArticleController extends Controller
             $form->text('title', '标题')->rules('required');
             $form->textarea('desc', '简介')->rules('required');
             $form->number('sort','排序');
-            $form->ckeditor('centent', '内容')->rules('required|min:3');
+            $form->editor('centent', '内容')->rules('required|min:3');
             $form->select('category_id','文章分类')->options('/admin/AjaxCategory')->rules('required');
             $form->switch('is_del', '是否启用')->rules('required');
             $form->display('created_at', 'Created At');

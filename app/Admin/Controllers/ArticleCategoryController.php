@@ -105,9 +105,10 @@ class ArticleCategoryController extends Controller
             $grid->is_del('是否启用')->display(function ($released) {
                 return $released ? '启用' : '禁止';
             });
-
-            $grid->created_at('创建时间');
-            $grid->updated_at('更新时间');
+            $grid->icon()->image('', 50, 50);
+            $grid->sort('排序')->sortable();
+            $grid->created_at('创建时间')->sortable();;
+            $grid->updated_at('更新时间')->sortable();;
         });
     }
 

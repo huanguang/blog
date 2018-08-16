@@ -20,7 +20,10 @@
 use App\Admin\Extensions\PHPEditor;
 use App\Admin\Extensions\Form\CKEditor;
 use Encore\Admin\Form;
+use App\Admin\Extensions\WangEditor;
 
 Encore\Admin\Form::forget(['map', 'editor']);
 //Form::extend('php', PHPEditor::class);
 Form::extend('ckeditor', CKEditor::class);
+
+Form::extend('editor', WangEditor::class);
