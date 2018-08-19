@@ -16,4 +16,6 @@ Route::group([
     $router->resource('article', ArticleController::class); //文章列表
     $router->resource('category', ArticleCategoryController::class); //文章分类
     $router->resource('AjaxCategory', AjaxCategory::class); //获取文章分类
+    $router->resource('goods', GoodsController::class); //商品列表
+    $router->resource('GoodsCategory', GoodsCategoryController::class); //商品分类列表
 });

@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Article;
+use App\Models\GoodsCategory;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Form;
@@ -13,7 +13,7 @@ use Encore\Admin\Show;
 use App\Admin\Extensions\Tools\MyButton;
 use Encore\Admin\Auth\Permission;
 
-class ArticleController extends Controller
+class GoodsCategoryController extends Controller
 {
     use ModelForm;
 
@@ -27,8 +27,8 @@ class ArticleController extends Controller
         Permission::check('article-index');
         return Admin::content(function (Content $content) {
 
-            $content->header('文章管理');
-            $content->description('文章列表');
+            $content->header('商品分类');
+            $content->description('商品分类列表');
 
             $content->body($this->grid());
         });
@@ -47,7 +47,7 @@ class ArticleController extends Controller
             $content->header('Detail');
             $content->description('description');
 
-            $content->body(Admin::show(Article::findOrFail($id), function (Show $show) {
+            $content->body(Admin::show(GoodsCategory::findOrFail($id), function (Show $show) {
 
                 $show->id('编号');
                 $show->sort('排序');
@@ -99,16 +99,17 @@ class ArticleController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(Article::class, function (Grid $grid) {
+        return Admin::grid(GoodsCategory::class, function (Grid $grid) {
 
-            $grid->id('ID')->sortable();
+            $grid->goods_category_id('ID')->sortable();
             // 第二列显示title字段，由于title字段名和Grid对象的title方法冲突，所以用Grid的column()方法代替
-            $grid->column('title','标题');
+            $grid->goods_category_name('商品分类名称');
+            $grid->goods_category_pid('上级分类');
             //是否显示
             $grid->sort('排序')->sortable();
-            $grid->is_del('是否启用')->display(function ($released) {
-                return $released ? '启用' : '禁止';
-            });
+            $grid->is_del('是否删除')->display(function ($released) {
+                return $released ? '是' : '否';
+            })->sortable();
 //            $grid->tools(function($tools){
 //                $url = "/admin/artimage";
 //                $icon = "fa-backward";
@@ -123,10 +124,8 @@ class ArticleController extends Controller
                 // 去掉默认的id过滤器
                 $filter->disableIdFilter();
                 // 在这里添加字段过滤器
-                $filter->like('title', '标题');
-
+                $filter->like('goods_category_name', '分类名称');
             });
-            $grid->created_at('创建时间')->sortable();
             $grid->updated_at('更新时间')->sortable();
         });
     }
@@ -138,7 +137,7 @@ class ArticleController extends Controller
      */
     protected function form()
     {
-        return Admin::form(Article::class, function (Form $form) {
+        return Admin::form(GoodsCategory::class, function (Form $form) {
 
             $form->display('id', 'ID');
             $form->text('title', '标题')->rules('required');
@@ -152,3 +151,4 @@ class ArticleController extends Controller
         });
     }
 }
+
